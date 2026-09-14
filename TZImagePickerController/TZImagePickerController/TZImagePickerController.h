@@ -389,6 +389,12 @@
 @property (assign, nonatomic) BOOL showPhotoCannotSelectLayer;
 @property (assign, nonatomic) BOOL notScaleImage;
 @property (assign, nonatomic) BOOL needFixComposition;
+/// 相册中允许显示/选择的视频最大时长，单位秒
+/// <= 0 表示不限制
+@property (nonatomic, assign) NSTimeInterval maximumSelectableVideoDuration;
+/// 相册中允许显示/选择的视频最大大小，单位字节
+/// <= 0 表示不限制
+@property (nonatomic, assign) int64_t maximumSelectableVideoSize;
 
 /// 默认是50，如果一个GIF过大，里面图片个数可能超过1000，会导致内存飙升而崩溃
 @property (assign, nonatomic) NSInteger gifPreviewMaxImagesCount;

@@ -791,9 +791,7 @@
     }
     
     if (self.isFirstAppear && !imagePickerVc.navLeftBarButtonSettingBlock) {
-        UIBarButtonItem *backItem = [[UIBarButtonItem alloc] initWithTitle:[NSBundle tz_localizedStringForKey:@"Back"] style:UIBarButtonItemStylePlain target:nil action:nil];
-        [TZCommonTools configBarButtonItem:backItem tzImagePickerVc:imagePickerVc];
-        self.navigationItem.backBarButtonItem = backItem;
+        self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:[NSBundle tz_localizedStringForKey:@"Back"] style:UIBarButtonItemStylePlain target:nil action:nil];
     }
     
     [self configTableView];
@@ -899,7 +897,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TZAlbumCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TZAlbumCell" forIndexPath:indexPath];
+    TZAlbumCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TZAlbumCell"];
     if (@available(iOS 13.0, *)) {
         cell.backgroundColor = UIColor.tertiarySystemBackgroundColor;
     }
@@ -1042,12 +1040,6 @@
 }
 
 + (void)configBarButtonItem:(UIBarButtonItem *)item tzImagePickerVc:(TZImagePickerController *)tzImagePickerVc {
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
-    if (@available(iOS 26.0, *)) {
-        // Keep the existing navigation bar appearance instead of mixing it with Liquid Glass.
-        item.hidesSharedBackground = YES;
-    }
-#endif
     item.tintColor = tzImagePickerVc.barItemTextColor;
     NSMutableDictionary *textAttrs = [NSMutableDictionary dictionary];
     textAttrs[NSForegroundColorAttributeName] = tzImagePickerVc.barItemTextColor;
@@ -1099,6 +1091,8 @@
             config.supportedLanguages = [NSSet setWithObjects:@"zh-Hans", @"zh-Hant", @"en", @"ar", @"de", @"es", @"fr", @"ja", @"ko-KP", @"pt", @"ru", @"vi", nil];
             config.preferredLanguage = nil;
             config.gifPreviewMaxImagesCount = 50;
+            config.maximumSelectableVideoDuration = 0;
+            config.maximumSelectableVideoSize = 0;
         }
     });
     return config;

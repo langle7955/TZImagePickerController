@@ -254,6 +254,40 @@ static dispatch_once_t onceToken;
     
     TZAssetModel *model;
     TZAssetModelMediaType type = [self getAssetType:asset];
+    // MARK: - 过滤超过最大允许时长 / 大小的视频
+    if (type == TZAssetModelMediaTypeVideo) {
+        TZImagePickerConfig *config = [TZImagePickerConfig sharedInstance];
+
+        // 最大时长限制
+        NSTimeInterval maxDuration = config.maximumSelectableVideoDuration;
+        if (maxDuration > 0 && asset.duration > maxDuration) {
+            return nil;
+        }
+
+        // 最大文件大小限制，单位：字节
+        int64_t maxVideoSize = config.maximumSelectableVideoSize;
+        if (maxVideoSize > 0) {
+            NSArray<PHAssetResource *> *resources = [PHAssetResource assetResourcesForAsset:asset];
+            PHAssetResource *videoResource = nil;
+
+            for (PHAssetResource *resource in resources) {
+                if (resource.type == PHAssetResourceTypeVideo ||
+                    resource.type == PHAssetResourceTypeFullSizeVideo) {
+                    videoResource = resource;
+                    break;
+                }
+            }
+
+            if (videoResource) {
+                NSNumber *fileSizeNumber = [videoResource valueForKey:@"fileSize"];
+                int64_t fileSize = fileSizeNumber.longLongValue;
+                if (fileSize > 0 && fileSize > maxVideoSize) {
+                    return nil;
+                }
+            }
+        }
+    }
+    
     if (!allowPickingVideo && type == TZAssetModelMediaTypeVideo) return nil;
     if (!allowPickingImage && type == TZAssetModelMediaTypePhoto) return nil;
     if (!allowPickingImage && type == TZAssetModelMediaTypePhotoGif) return nil;
